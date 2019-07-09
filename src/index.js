@@ -1,8 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './custom.css'
+import { tsExpressionWithTypeArguments } from '@babel/types';
 // import { thisExpression } from '@babel/types';
+function Navbar(){
+  const links=[
+    {text: 'tic tac toe',link: '#game'},
+    {text: 'user information',link: '#'},
+    {text: 'adder & clock',link: '#'},
+    {text: 'conditional render',link: '#'},
+    {text: 'list',link: '#'},
+    {text: 'form',link: '#'},
+    {text: 'temperature calculator',link: '#'},
+    {text: 'filterable product table',link: '#filterTable'},
+  ]
+  const linkElements = links.map(x => <li key={x.text}><a href={x.link}>{x.text}</a></li>)
+  return (
+    <div className="left">
+      <ul>
+        {linkElements}
+      </ul>
+    </div>
+  )
+}
+//#region global region
+//#endregion
 
+//#region tutorail tic tac toe
 // class Square extends React.Component {
 //     shouldComponentUpdate(nextProps,nextState){
 //         if(nextProps.value !== this.props.value){
@@ -22,6 +47,7 @@ import './index.css';
 //         );
 //       }
 //   }
+
 function Square(props) {
 
   return (
@@ -123,7 +149,7 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
+      <div className="game" id={this.props.id}>
         <div className="game-board">
           <Board
             squares={squares}
@@ -138,9 +164,9 @@ class Game extends React.Component {
     );
   }
 }
-
+//#endregion 
 // =========================================
-// practice extract component
+//#region practice extract component
 class Picture extends React.Component {
   render() {
     return (
@@ -178,7 +204,93 @@ class Comment extends React.Component {
     );
   }
 }
+//#endregion
+//#region practice extract component 2 
+function BoilingVerdict(props){
+  if(props.celsius >= 100){
+    return <p>The water would boil</p>
+  }
+  return <p>The water would not boil</p>
+}
 
+function toCelsius(fahrenheit){
+  return (fahrenheit - 32) * 5 / 9;
+}
+function toFahrenheit(celsius){
+  return (celsius * 9 / 5) + 32;
+}
+function tryConvert(value, converter){
+  var parsed = parseFloat(value,10);
+  return isNaN(parsed) ? '': converter(parsed);
+}
+class TemperatureInput extends React.Component{
+  scaleName = {
+    c : 'Celsius',
+    f : 'Fehrenheit'
+  }
+  _handleChange = (event) => {
+    this.props.onTemperatureChange(event.target.value)
+  }
+  
+  render(){
+    const scale = this.props.scale;
+    const temperature = this.props.temperature
+
+    return (
+      <fieldset>
+      <legend>Enter the temperature in {this.scaleName[scale]} :</legend>
+      <input 
+        type="text" 
+        value={temperature}
+        onChange={this._handleChange}
+        />
+    </fieldset>
+    )
+  }
+}
+class CalculateTemperature extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      temperature : '',
+      scale : 'c'
+    }
+  }
+  
+  _handleFahrenheitChange = (value) => {
+    this.setState({
+      temperature: value,
+      scale: 'f'
+    })
+  }
+  _handleCelsiusChange = (value) => {
+    this.setState({
+      temperature: value,
+      scale:'c'
+    })
+  }
+  render(){
+    const temperature = this.state.temperature;
+    const fahrenheit = this.state.scale === 'c' ? tryConvert(temperature,toFahrenheit) : temperature;
+    const celsius = this.state.scale === 'f' ? tryConvert(temperature,toCelsius) : temperature;
+    return (
+      <div>
+        <TemperatureInput 
+          scale="c"
+          temperature= {celsius}
+          onTemperatureChange ={this._handleCelsiusChange}/>
+        <TemperatureInput 
+          scale="f"
+          temperature= {fahrenheit}
+          onTemperatureChange ={this._handleFahrenheitChange}/>
+        <BoilingVerdict celsius={celsius}/>
+      </div>
+    )
+  }
+}
+//#endregion
+
+//#region practice set state, life circle
 class Counter extends React.Component {
   constructor(props) {
     super(props);
@@ -265,7 +377,8 @@ class Clock extends React.Component {
     )
   }
 }
-//conditional rendering
+//#endregion
+//#region conditional rendering
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -294,7 +407,8 @@ class Login extends React.Component {
     )
   }
 }
-
+//#endregion
+//#region practice list 
 function ListItem(props){
   return (
     <li >{props.value}</li>
@@ -311,13 +425,223 @@ function List (props){
     </ul>
   )
 }
+//#endregion
+//#region practice form ,controlled element
+class NameForm extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      name : '',
+      birthday:new Date('1990-01-01').toISOString().slice(0,10)
+    }
+  }
+  _handleSubmit = (event) => {
+    event.preventDefault();
+    alert("wait !!");
+  }
+  _handleChange = (event) => {
+    let value = event.target.value;
+    const name = event.target.name;
+    switch (name){
+      case "name":
+        value = value.toUpperCase();
+        break;
+      case "birthday":
+      default:
+        break;
+    }
+    this.setState({
+      [name] : value
+    });
+  }
+  render(){
+    return (
+      <form onSubmit={this._handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={this.state.name} name="name" onChange={this._handleChange}/>
+        </label>
+        <label>
+          Birth:
+          <input type="date" value={this.state.birthday} name="birthday" onChange={this._handleChange}/>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    )
+  }
+}
+class SelectForm extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      fruit:'apple'
+    }
+  }
+  _handleSubmit=(event) => {
+    event.preventDefault();
+  }
+  _handleChange = (event) =>{
+    this.setState({
+      fruit:event.target.value
+    })
+  }
+  render(){
+    return (
+    <form onSubmit={this._handleSubmit}>
+      <label>
+        <select value={this.state.fruit} onChange={this._handleChange}>
+          <option value="apple" >APPLE</option>
+          <option value="banana" >BANANA</option>
+          <option value="peach">PEACH</option>
+          <option value="watermelon">WATER MELON</option>
+        </select>
+      </label>
+      <input type="submit" value="Submit"/>
+    </form>
+    )
+  }
+}
+//#endregion
+//#region Thinking of process
+const products = [
+  {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+  {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+  {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+  {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+  {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+  {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+];
+class FilterableProductTable extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      filterText:'',
+      inStockOnly:false
+    }
+  }
+  _handleStockCheck = (value) => {
+    this.setState({
+      inStockOnly:value
+    })
+  }
+  _handleFilterTextChange = (value) => {
+    this.setState({
+      filterText: value
+    })
+  }
+  render(){
+    return (
+    <div id={this.props.id}>
+      <SearchBar 
+        filterText={this.state.filterText} 
+        inStockOnly={this.state.inStockOnly}
+        handleStockCheck={this._handleStockCheck}
+        handleFilterTextChange={this._handleFilterTextChange}/>
+      <ProductTable 
+        products={this.props.products} 
+        filterText={this.state.filterText} 
+        inStockOnly={this.state.inStockOnly}/>
+    </div>
+    );
+  }
+}
+function SearchBar(props){
+  let _onChange = (event) =>{
+    props.handleFilterTextChange(event.target.value);
+  }
+  let _onCheck = (event) => {
+    props.handleStockCheck(event.target.checked);
+  }
+
+  return (
+    <div>
+      <div>
+        <input type="text" value={props.filterText} onChange={_onChange} placeholder="Search..."/>
+      </div>
+      <label>
+        <input type="checkbox" checked={props.inStockOnly} onChange={_onCheck}/>
+        only show the product in stock
+      </label>
+    </div>
+  );
+}
+function ProductTable(props){
+  const products = props.products;
+  const filterText = props.filterText;
+  const inStockOnly = props.inStockOnly;
+  const categories = products.map(x => x.category)
+                              .filter((val,idx,self) =>{
+                                return self.indexOf(val) === idx;
+                              })
+  let row = [];
+  categories.forEach(x => {
+    const categoryHead = (<ProductCategoryRow 
+                            category={x} 
+                            key={x}/>);
+    
+    const product = products.filter(y => y.category === x)
+                            .filter(y => {
+                              //filter search text
+                              let text = y.name.indexOf(filterText) !== -1
+                              //filter stock
+                              let stock = inStockOnly ? y.stocked : true
+                              return text && stock;
+                            }) //filter
+                            .reduce((el,y) => {
+                              el.push(<ProductRow 
+                                        product={y}
+                                        key={y.name}/>)
+                              return  el;
+                            },[])
+    if(typeof product !== 'undefined' && product.length > 0){
+      row.push(categoryHead);
+      row.push(product);
+    }                
+
+  })
+  return (
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Price</th></tr>
+      </thead>
+      <tbody>
+        {row}
+      </tbody>
+    </table>
+  );
+  
+}
+function ProductCategoryRow(props){
+  return (
+    <tr>
+      <td 
+        colSpan="2"
+        style={
+          {fontWeight:"bolder"}
+        }
+      >{props.category}
+      </td>
+    </tr>
+  );
+
+}
+function ProductRow(props){
+  const {name,price,stocked} = props.product ;
+  const _name = !stocked ? 
+                <span style={{color:'red'}}>
+                  {name}
+                </span> 
+                : name
+  return (
+    <tr><td>{_name}</td><td>{price}</td></tr>
+  );
+
+}
+//#endregion
 // ========================================
 
-ReactDOM.render(
-  <Game />,
-  document.getElementById('root')
-);
 
+//Data
 var author = {
   name: 'Roy',
   PictureUrl: '/assets/Picture.jpg'
@@ -327,24 +651,38 @@ var date = new Date().toDateString();
 
 
 
-//test
+//DOM render
 ReactDOM.render(
   <div>
+    <Navbar/>
 
-    <Comment author={author} text={text} date={date} />
-    ----------------------------------------------------------
-    <Counter diff={5} />
-    ----------------------------------------------------------
-    <Adder />
-    ----------------------------------------------------------
-    <Clock />
-    ----------------------------------------------------------
-    <Login />
-    ----------------------------------------------------------
-    <List/>
+    <div className="right">
+      <Game id="game"/>
+      <hr/>
+      <Comment id="info" author={author} text={text} date={date} />
+      <hr/>
+      <Counter id="adder-clock" diff={5} />
+      <hr/>
+      <Adder />
+      <hr/>
+      <Clock />
+      <hr/>
+      <Login id="login"/>
+      <hr/>
+      <List id="list"/>
+      <hr/>
+      <NameForm id="form"/>
+      <hr/>
+      <SelectForm />
+      <hr/>
+      <CalculateTemperature id="temperature"/>
+      <hr/>
+      <FilterableProductTable id="filterTable" products={products}/>
+    </div>
   </div>
+
   ,
-  document.querySelector('#test')
+  document.querySelector('#root')
 );
 
 

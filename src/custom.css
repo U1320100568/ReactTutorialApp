@@ -1,0 +1,39 @@
+  .left ul{
+    list-style-type: none;
+  }
+  .left li{
+    padding:10px 20px;
+    box-sizing: border-box;
+  }
+  .left li:hover{
+    border: solid 1px lightslategray;
+  }
+  
+  .left li a{
+    color:lightslategray;
+    text-decoration: none;
+  }
+
+@media screen and (min-width: 600px){
+    .left{
+        width:30%;
+        float:left;
+      }
+      .right{
+        margin-left:30%;
+      }
+}
+@media screen and (max-width: 599px){
+    .left{
+        position:fixed;
+        top:0;
+        left:0;
+        background-color: white;
+      }
+      .right{
+        margin-top:200px;
+      }
+      .left li{
+        display: inline-block;
+      }
+}
