@@ -1,20 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import './custom.css'
+import './custom.css';
 import { tsExpressionWithTypeArguments } from '@babel/types';
+import styled ,{keyframes} from 'styled-components';
+import {TodoList} from './components/todo-list'
+import res from './resource/resource'
 // import { thisExpression } from '@babel/types';
 function Navbar(){
-  const links=[
-    {text: 'tic tac toe',link: '#game'},
-    {text: 'user information',link: '#'},
-    {text: 'adder & clock',link: '#'},
-    {text: 'conditional render',link: '#'},
-    {text: 'list',link: '#'},
-    {text: 'form',link: '#'},
-    {text: 'temperature calculator',link: '#'},
-    {text: 'filterable product table',link: '#filterTable'},
-  ]
+  const links = res.getRoute();
   const linkElements = links.map(x => <li key={x.text}><a href={x.link}>{x.text}</a></li>)
   return (
     <div className="left">
@@ -24,7 +18,147 @@ function Navbar(){
     </div>
   )
 }
-//#region global region
+//#region global style
+const StyleRoot = styled.div`
+  display:flex;
+  flex-direction: row;
+  width:100%;
+  .right {
+    flex:4;
+  }
+  .left {
+    flex:1;
+  }
+
+`;
+const StyledButton = styled.button`
+    border-radius:3px;
+    border:solid 2px lightslategray;
+    color:lightslategray;
+    padding: 0.5em 1em;
+    margin: 0 1em;
+    outline: 0;
+      &:hover{
+        box-shadow: 0.1rem 0.1rem 0.2rem grey;
+      }
+      
+    ${(props) => props.primary && `background-color:lightslategray;
+                                   color:white;`}
+    `;
+const TomatoButton = styled(StyledButton)`
+  color:tomato;
+  border-color:tomato;
+  ${(props) => props.primary && `background-color:tomato;
+                                  color:white;`}
+  `;
+
+
+// function ReverseButton(props){
+//   const text = props.children.split('').reverse();
+//   return <button >{text}</button>
+// }
+
+function ReverseButton(props){
+
+  const Styled = styled.button`
+    border-radius:3px;
+    border:solid 2px lightslategray;
+    color:lightslategray;
+    padding: 0.5em 1em;
+    margin: 0 1em;
+    outline: 0;
+  `;
+  const Reserve = (props) =>{
+    const text = props.children.split('').reverse();
+    return <button >{text}</button>
+  }
+
+  return <Styled as={Reserve} {...props}></Styled>
+}
+
+
+//#region list
+const StyleListParent = styled.ul`
+  list-style-type: none;
+  width:100px;
+`;
+const StyleListItem = styled.li`
+  border-left: solid 2px chocolate;
+  margin-bottom: 1em;
+  padding: 0 1em;
+  line-height:0.9;  
+    &:hover {
+      background-color: chocolate;
+    }
+    a {
+      text-decoration: none;
+      color: cadetblue;
+    }
+    a:hover {
+      color:white;
+    }
+    & ~ &:hover{
+      background-color: darkslateblue;
+
+      ::after{
+        font-size:1.4em;
+        margin-left:0.25em;
+        float:right;
+        content:'🚀';
+      }
+    }
+    
+    & + &:hover{
+      background-color: darkslategray;
+    }
+    .sunday &:hover {
+      background-color: olive;  
+    } 
+`;
+const SpecialListItem = styled.li`
+    border-left: solid 2px chocolate;
+    margin-bottom: 1em;
+    padding: 0 1em;
+    line-height:0.9;  
+    a {
+      color: goldenrod;
+    }
+`;
+function Weekday(props){
+  const link = '#'
+  return (
+    <StyleListParent>
+      <StyleListItem><a href={link}>星期一</a></StyleListItem>
+      <StyleListItem><a href={link}>星期二</a></StyleListItem>
+      <StyleListItem><a href={link}>星期三</a></StyleListItem>
+      <StyleListItem className="tomato"><a href={link}>星期四</a></StyleListItem>
+      <SpecialListItem><a href={link}>星期五</a></SpecialListItem>
+      <StyleListItem><a href={link}>星期六</a></StyleListItem>
+      <div className="sunday"><StyleListItem><a href={link}>星期日</a></StyleListItem></div>
+    </StyleListParent>
+  )
+}
+//#endregion
+//#region animation
+const aniRotate = keyframes`
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+`;
+const Rotate = styled.div`
+  display:inline-block;
+  padding:1em;
+  font-size:1.5em;
+  animation: ${aniRotate } 4s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+`;
+//#endregion
+
+
+
+
 //#endregion
 
 //#region tutorail tic tac toe
@@ -393,9 +527,9 @@ class Login extends React.Component {
   }
   _buttonElement = () => {
     if (this.state.isLogin) {
-      return (<button onClick={this._toggleLoginButton}>登出</button>)
+      return (<StyledButton onClick={this._toggleLoginButton} text="">登出</StyledButton>)
     } else {
-      return (<button onClick={this._toggleLoginButton}>登入</button>)
+      return (<StyledButton onClick={this._toggleLoginButton}text="">登入</StyledButton>)
     }
   }
   render() {
@@ -503,14 +637,7 @@ class SelectForm extends React.Component{
 }
 //#endregion
 //#region Thinking of process
-const products = [
-  {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
-  {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
-  {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
-  {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
-  {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
-  {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
-];
+const products = res.getProduct();
 class FilterableProductTable extends React.Component{
   constructor(props){
     super(props);
@@ -638,6 +765,21 @@ function ProductRow(props){
 
 }
 //#endregion
+//#region Redux
+function APP(){
+  const onTodoClick = () => {
+  }
+  const todos = res.getTodos();
+  return <TodoList
+            onTodoClick={onTodoClick}
+            todos={todos}
+  ></TodoList>
+
+}
+//#endregion
+
+  
+
 // ========================================
 
 
@@ -653,7 +795,7 @@ var date = new Date().toDateString();
 
 //DOM render
 ReactDOM.render(
-  <div>
+  <StyleRoot>
     <Navbar/>
 
     <div className="right">
@@ -678,8 +820,17 @@ ReactDOM.render(
       <CalculateTemperature id="temperature"/>
       <hr/>
       <FilterableProductTable id="filterTable" products={products}/>
+      <hr/>
+      <div id="styled">
+        <StyledButton>normal</StyledButton><StyledButton primary>primary</StyledButton>
+        <TomatoButton >tomato</TomatoButton><TomatoButton  primary>primary</TomatoButton>
+        <ReverseButton>reverse</ReverseButton>
+        <Weekday/>
+        Animation <Rotate><span>🐋</span></Rotate>
+      </div>
+      <APP/>
     </div>
-  </div>
+  </StyleRoot>
 
   ,
   document.querySelector('#root')
@@ -689,16 +840,7 @@ ReactDOM.render(
 
 //Helper
 function calculateWinner(squares) {
-  const line = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
+  const line = res.getWinLine();
   for (var i = 0; i < line.length; i++) {
     const [a, b, c] = line[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
