@@ -6,6 +6,7 @@ import { tsExpressionWithTypeArguments } from '@babel/types';
 import styled ,{keyframes} from 'styled-components';
 import {TodoList} from './components/todo-list'
 import res from './resource/resource'
+import {StyleRoot,StyledButton,TomatoButton,StyledSubmit,ContentBox,ContentItem} from './styles/global'
 // import { thisExpression } from '@babel/types';
 function Navbar(){
   const links = res.getRoute();
@@ -19,39 +20,6 @@ function Navbar(){
   )
 }
 //#region global style
-const StyleRoot = styled.div`
-  display:flex;
-  flex-direction: row;
-  width:100%;
-  .right {
-    flex:4;
-  }
-  .left {
-    flex:1;
-  }
-
-`;
-const StyledButton = styled.button`
-    border-radius:3px;
-    border:solid 2px lightslategray;
-    color:lightslategray;
-    padding: 0.5em 1em;
-    margin: 0 1em;
-    outline: 0;
-      &:hover{
-        box-shadow: 0.1rem 0.1rem 0.2rem grey;
-      }
-      
-    ${(props) => props.primary && `background-color:lightslategray;
-                                   color:white;`}
-    `;
-const TomatoButton = styled(StyledButton)`
-  color:tomato;
-  border-color:tomato;
-  ${(props) => props.primary && `background-color:tomato;
-                                  color:white;`}
-  `;
-
 
 // function ReverseButton(props){
 //   const text = props.children.split('').reverse();
@@ -267,9 +235,9 @@ class Game extends React.Component {
         'go to game start '
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>
+          <StyledButton onClick={() => this.jumpTo(move)}>
             {desc}
-          </button>
+          </StyledButton>
         </li>
       )
     })
@@ -443,7 +411,7 @@ class Counter extends React.Component {
         <span>
           {this.state.count}
         </span>
-        <button onClick={() => this.add()}>+{this.props.diff}</button>
+        <StyledButton onClick={() => this.add()}>+{this.props.diff}</StyledButton>
       </div>
     );
   }
@@ -461,7 +429,7 @@ class Adder extends React.Component {
     return (
       <div>
         <h2>{value}</h2>
-        <button onClick={this._add}>Add 2</button>
+        <StyledButton onClick={this._add}>Add 2</StyledButton>
       </div>
     )
   }
@@ -599,11 +567,12 @@ class NameForm extends React.Component{
           Birth:
           <input type="date" value={this.state.birthday} name="birthday" onChange={this._handleChange}/>
         </label>
-        <input type="submit" value="Submit" />
+        <StyledSubmit type="submit" value="Submit" />
       </form>
     )
   }
 }
+
 class SelectForm extends React.Component{
   constructor(props){
     super(props);
@@ -619,6 +588,7 @@ class SelectForm extends React.Component{
       fruit:event.target.value
     })
   }
+      
   render(){
     return (
     <form onSubmit={this._handleSubmit}>
@@ -630,7 +600,7 @@ class SelectForm extends React.Component{
           <option value="watermelon">WATER MELON</option>
         </select>
       </label>
-      <input type="submit" value="Submit"/>
+      <StyledSubmit type="submit" value="Submit"/>
     </form>
     )
   }
@@ -798,38 +768,75 @@ ReactDOM.render(
   <StyleRoot>
     <Navbar/>
 
-    <div className="right">
-      <Game id="game"/>
-      <hr/>
-      <Comment id="info" author={author} text={text} date={date} />
-      <hr/>
-      <Counter id="adder-clock" diff={5} />
-      <hr/>
-      <Adder />
-      <hr/>
-      <Clock />
-      <hr/>
-      <Login id="login"/>
-      <hr/>
-      <List id="list"/>
-      <hr/>
-      <NameForm id="form"/>
-      <hr/>
-      <SelectForm />
-      <hr/>
-      <CalculateTemperature id="temperature"/>
-      <hr/>
-      <FilterableProductTable id="filterTable" products={products}/>
-      <hr/>
-      <div id="styled">
-        <StyledButton>normal</StyledButton><StyledButton primary>primary</StyledButton>
-        <TomatoButton >tomato</TomatoButton><TomatoButton  primary>primary</TomatoButton>
-        <ReverseButton>reverse</ReverseButton>
+    <ContentBox className="right">
+      <ContentItem>
+        <Game id="game"/>
+      </ContentItem>
+      
+      <ContentItem>
+        <Comment id="info" author={author} text={text} date={date} />
+      </ContentItem>
+      
+      <ContentItem>
+        <Counter id="adder-clock" diff={5} />
+      </ContentItem>
+      
+      <ContentItem>
+        <Adder />
+      </ContentItem>
+      
+      <ContentItem>
+        <Clock />
+      </ContentItem>
+      
+      <ContentItem>
+        <Login id="login"/>
+      </ContentItem>
+      
+      <ContentItem>
+        <List id="list"/>
+      </ContentItem>
+      
+      <ContentItem>
+        <NameForm id="form"/>
+      </ContentItem>
+      
+      <ContentItem>
+        <SelectForm />
+      </ContentItem>
+      
+      <ContentItem>
+        <CalculateTemperature id="temperature"/>
+      </ContentItem>
+      
+      <ContentItem>
+        <FilterableProductTable id="filterTable" products={products}/>
+      </ContentItem>
+      
+      <ContentItem>
+        <div id="styled">
+          <StyledButton>normal</StyledButton><StyledButton primary>primary</StyledButton>
+        </div>
+        <div>
+          <TomatoButton >tomato</TomatoButton><TomatoButton  primary>primary</TomatoButton>
+        </div>
+        <div>
+          <ReverseButton>reverse</ReverseButton>
+        </div>
+      </ContentItem>
+      <ContentItem>
         <Weekday/>
-        Animation <Rotate><span>🐋</span></Rotate>
-      </div>
-      <APP/>
-    </div>
+      </ContentItem>
+      <ContentItem>
+        Animation 
+        <br/>
+        <Rotate><span>🐋</span></Rotate>
+      </ContentItem>
+      <ContentItem>
+        <APP/>
+      </ContentItem>
+      
+    </ContentBox>
   </StyleRoot>
 
   ,
